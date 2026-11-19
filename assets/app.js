@@ -27,6 +27,12 @@ const evClass=e=>e==="연구 근거 있음"?"r":e==="전통적 사용"?"t":"p";
 const ev=e=>e?`<span class="ev ${evClass(e)}">● ${esc(e)}</span>`:"";
 const status=s=>s==="공개"?"":s==="예시"?`<span class="badge ex">예시</span>`:s?`<span class="badge">${esc(s)}</span>`:"";
 const pending=(what,how)=>`<div class="pending"><b>준비 중</b> · ${esc(what)}${how?`<br><span class="note">${esc(how)}</span>`:""}</div>`;
+const IMG={"oil-001": {"f": "Lavandula-angustifolia-flowering.JPG", "a": "Sten Porse", "n": ""}, "oil-002": {"f": "Citrus_sinensis.jpg", "a": "Neutrality", "n": "퍼블릭 도메인"}, "oil-003": {"f": "Mentha-piperita.JPG", "a": "Sten Porse", "n": ""}, "oil-004": {"f": "Frankincense.JPG", "a": "Gaius Cornelius", "n": "프랑킨센스 수지"}, "oil-005": {"f": "Rosmarinus_officinalis133095382.jpg", "a": "THOR", "n": ""}, "oil-006": {"f": "Cupressus_sempervirens.JPG", "a": "Lucarelli", "n": "사이프러스 열매"}, "oil-007": {"f": "Pelargonium_graveolens.flower.01.JPG", "a": "Tsester", "n": ""}, "oil-008": {"f": "Eucalyptus_radiata.jpg", "a": "HelloMojo", "n": ""}, "oil-009": {"f": "Citrus_limonum_3.JPG", "a": "Petar43", "n": ""}, "oil-010": {"f": "Chamaemelum_nobile_flower.JPG", "a": "Petruss", "n": ""}, "oil-011": {"f": "Cedrus_libani_subsp._atlantica_Cedr_atlaski_2019-08-03_07.jpg", "a": "Agnieszka Kwiecień, Nova", "n": ""}, "oil-012": {"f": "Citrus_paradisi_(Grapefruit,_pink).jpg", "a": "א (Aleph)", "n": ""}, "oil-013": {"f": "Origanum_majorana_002.JPG", "a": "H. Zell", "n": ""}, "oil-014": {"f": "Lemongrass_(Cymbopogon_citratus)_1.jpg", "a": "Mokkie", "n": "사진은 같은 속의 서인도 레몬그라스"}, "oil-015": {"f": "Bergamotfruit.jpg", "a": "Xenocryst", "n": "CC BY-SA 2.0"}};
+const imgUrl=(f,w)=>"https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(f)+"?width="+(w||480);
+const imgPage=f=>"https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(f);
+const oilImg=(o,cls="")=>{const m=IMG[o.id];if(!m)return `<div class="oimg ${cls} ph">${SPRIG}</div>`;
+  return `<img class="oimg ${cls}" src="${imgUrl(m.f,cls==="sm"?160:520)}" alt="${esc(o.ko)} 원재료 — ${esc(o.part)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;oimg ${cls} ph&quot;></div>'">`;};
+const oilCredit=o=>{const m=IMG[o.id];return m?`<div class="ocredit">사진: <a href="${imgPage(m.f)}" target="_blank" rel="noopener">${esc(m.a)}</a> · Wikimedia Commons${m.n?" · "+esc(m.n):""}</div>`:"";};
 const photo=(cap,cls="")=>`<div class="photo ${cls}">${SPRIG}<div class="cap"><b>사진 자리</b> ${esc(cap)}</div></div>`;
 function safety(x,full){
   const t=[];
@@ -41,7 +47,7 @@ function rcard(r){
   <h3>${esc(r.name)}</h3><div class="chips">${r.moods.map(m=>`<span class="chip">${esc(m)}</span>`).join("")}</div>${safety(r)}</a>`;
 }
 function ocard(o){
-  return `<a class="card" href="#oil-${o.id}"><div class="note" style="font-family:var(--latin);font-style:italic;font-size:14px">${esc(o.sci)}</div>
+  return `<a class="card ocard" href="#oil-${o.id}">${oilImg(o,"sm")}<div class="note" style="font-family:var(--latin);font-style:italic;font-size:14px">${esc(o.sci)}</div>
   <h3>${esc(o.ko)}${status(o.status)}</h3><div class="note">${esc(o.scent)} · ${esc(o.note)} 노트</div>
   <div class="chips" style="margin-top:8px">${o.moods.map(m=>`<span class="chip lav">${esc(m)}</span>`).join("")}</div></a>`;
 }
@@ -117,7 +123,7 @@ function recipePage(id){
     <h1>${esc(r.name)}</h1>
     <div class="chips">${r.moods.map(m=>`<a class="chip" href="#mood-${MOOD[m]}">${esc(m)}</a>`).join("")}${r.scent?`<a class="chip out" href="#scent-${SCENT[r.scent]}">${esc(r.scent)}</a>`:""}</div>
     ${safety(r,true)}</div>
-  ${photo("완성된 "+r.name+" — 소품과 재료가 놓인 테이블, 부드러운 자연광, 라벨 없는 병")}
+  ${r.ings.length?`<div class="rthumbs">${r.ings.map(i=>{const o=oilById[i.oil];return o?`<a href="#oil-${o.id}">${oilImg(o,"sm")}<span>${esc(o.ko)}</span></a>`:""}).join("")}</div>`:""}
   <section class="s"><h2>${LEAF}재료와 비율</h2>
     ${r.use==="티"?`<table class="ing"><tr><th>허브</th></tr><tr><td>${esc(r.herb)}</td></tr><tfoot><tr><td>${esc(r.base)} ${esc(r.ml)}ml · 에센셜 오일은 넣지 않아요</td></tr></tfoot></table>`:
     `<table class="ing"><thead><tr><th>에센셜 오일</th><th style="text-align:right">양</th></tr></thead><tbody>${ingRows}</tbody>
@@ -163,9 +169,11 @@ function oilPage(id){
   const uses=[["디퓨저",o.useDiff],["마사지",o.useMas],["생활·입욕",o.useLife]].filter(u=>u[1]);
   const notes=["탑","미들","베이스"];
   return `<div class="narrow"><div class="crumb"><a href="#home">홈</a> › <a href="#oils">오일 사전</a> › ${esc(o.ko)}</div>
-  <div class="oil-hero">${photo(o.prompt?"원재료 사진 — "+o.ko:"대표 이미지 프롬프트 준비 중","tall")}
+  <div class="oil-hero2"><div class="ot">
     <div class="latin">${esc(o.sci)}</div><h1>${esc(o.ko)}${status(o.status)}</h1><div class="en">${esc(o.en)}</div>
-    ${o.copy?`<p class="copy">${esc(o.copy)}</p>`:`<div style="margin-top:14px">${pending("캐릭터 카피","오일DB '캐릭터 카피' 칸")}</div>`}</div>
+    ${o.copy?`<p class="copy">${esc(o.copy)}</p>`:`<div style="margin-top:14px">${pending("캐릭터 카피","오일DB '캐릭터 카피' 칸")}</div>`}
+    <div class="opart">${esc(o.part)} · ${esc(o.method)}</div></div>
+    <figure class="ofig">${oilImg(o)}${oilCredit(o)}</figure></div>
   <section class="s"><div class="eyebrow">At a glance</div><h2>${LEAF}한눈에 보기</h2><div class="card">
     <div class="g2"><div class="kvb"><div class="note">향 계열</div><div class="v">${esc(o.scent)}</div></div>
     <div class="kvb"><div class="note">노트</div><div class="v">${esc(o.note)} 노트</div></div>

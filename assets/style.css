@@ -181,3 +181,20 @@ ul.subn li::before{content:"·";position:absolute;left:3px}ul.subn li.w{color:va
 .chip.on{background:var(--lav-600)!important;color:#fff!important;border-color:var(--lav-600)!important}
 button.chip{cursor:pointer;font:inherit;font-size:13px}button:disabled{opacity:.45;cursor:default}
 .tres{background:linear-gradient(160deg,var(--lav-100),var(--ivory-2));border-radius:18px;padding:22px 18px;text-align:center;margin-top:6px}
+
+/* 원재료 사진 */
+.oil-hero2{display:grid;grid-template-columns:1fr 132px;gap:16px;align-items:center;padding:14px 0 2px}
+.oil-hero2 .latin{font-family:var(--latin);font-style:italic;font-size:17px;color:var(--lav-600)}
+.oil-hero2 h1{font-size:30px;margin:2px 0}
+.oil-hero2 .en{font-size:11.5px;letter-spacing:2.2px;text-transform:uppercase;color:var(--muted)}
+.oil-hero2 .copy{font-family:var(--serif);font-size:16px;margin-top:10px;line-height:1.55}
+.oil-hero2 .opart{font-size:12.5px;color:var(--muted);margin-top:8px}
+.ofig{margin:0}
+.oimg{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:16px;background:linear-gradient(160deg,var(--lav-100),var(--ivory-2) 60%,var(--sage-100))}
+.oimg.ph{display:flex;align-items:center;justify-content:center}.oimg.ph svg{width:50%;opacity:.7}
+.ocredit{font-size:10px;line-height:1.4;color:var(--muted);margin-top:5px;word-break:keep-all}.ocredit a{color:inherit}
+@media(min-width:820px){.oil-hero2{grid-template-columns:1fr 220px;gap:28px}.oil-hero2 h1{font-size:36px}}
+.rthumbs{display:flex;gap:12px;flex-wrap:wrap;margin:4px 0 6px}
+.rthumbs a{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;color:var(--muted);text-decoration:none;width:74px;text-align:center;word-break:keep-all}
+.oimg.sm{width:56px;height:56px;aspect-ratio:1;border-radius:50%}
+.ocard{position:relative;padding-right:84px}.ocard>.oimg.sm{position:absolute;right:14px;top:14px;width:60px;height:60px}
